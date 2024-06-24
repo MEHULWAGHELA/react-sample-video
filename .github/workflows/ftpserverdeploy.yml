@@ -1,0 +1,34 @@
+name: Deploy to FTP
+
+on:
+  push:
+    branches:
+      - main # This triggers the workflow on pushes to the main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16" # Specify the Node.js version you want to use
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the React application
+        run: npm run build
+
+      - name: Deploy to FTP server
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: build # The directory where React builds static files
+          server-dir: /path/to/your/ftp/directory
